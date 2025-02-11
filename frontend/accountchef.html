@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!-- Links an external CSS file -->
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url("https://th.bing.com/th/id/R.269bc1ddbe022db72a8fd7fc8a2ae5fd?rik=1bFXyWqhtcxEHA&pid=ImgRaw&r=0");
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;  /* Sets the height to fill the entire viewport */
+            color: #333;
+        }
+
+        .account-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .account-container h1 {
+            margin-bottom: 20px;  /* Adds space below the heading */
+            font-size: 1.8rem;
+            color: #444;
+        }
+
+        .user-info p {
+            margin: 10px 0;
+            font-size: 1.2rem;
+            line-height: 1.5;  /* Sets line height for better readability */
+        }
+
+        .logout {
+            display: inline-block;
+            margin-top: 20px;  /* Adds space above the button */
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .logout:hover {
+            background-color: #ff1a1a;
+        }
+
+        .backbuttons {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        .icon-account{
+            position:absolute;
+            right:20px;
+            top:20px;
+        }
+    </style>
+</head>
+<body>
+<div class="account-container">  <!-- Container for the account details -->
+    <a href="chef.html" class="backbuttons"> <--Back</a>  <!-- Back button linking to chef.html -->
+    <div class="icon-account">
+        <a href="chef.html">
+            <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Home.png?raw=true" alt="Home" class="icon">
+        </a>
+    </div>
+    <h1>My Account</h1>
+    <div id="user-info" class="user-info">  <!-- This section will be filled dynamically with user data -->
+    </div>
+    <a href="login.html" id="logout" class="logout">Logout</a>
+</div>
+<script>
+    // Retrieve the stored JWT token from localStorage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        // Sends a request to the backend to fetch user data
+        fetch('http://127.0.0.1:5000/account', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Parses the JSON response if the request is successful
+                } else {
+                    throw new Error('Error retrieving user data');
+                }
+            })
+            .then(user => {   // Updates the user info section dynamically with user data
+                const userInfoDiv = document.getElementById('user-info');
+                userInfoDiv.innerHTML = `
+    <p><strong>Name:</strong> ${user.name}</p>
+    <p><strong>Surname:</strong> ${user.surname}</p>
+    <p><strong>Fiscal Code:</strong> ${user.fiscal_code}</p>
+    <p><strong>Date of Birth:</strong> ${user.date_of_birth}</p>
+    <p><strong>Username:</strong> ${user.username}</p>
+  `;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please log in again');
+                window.location.href = 'login.html';
+            });
+    } else {
+        alert('You are not authenticated. Please log in');
+        window.location.href = 'login.html';
+    }
+    // Logout functionality: Remove token and redirect to login page
+    document.getElementById('logout').addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = 'login.html';
+    });
+</script>
+</body>
+</html>

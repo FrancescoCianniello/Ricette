@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Recipes</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!-- Link to external stylesheet -->
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+            margin-top: 100px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .recipe-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .recipe-card img {
+            width: 50%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .recipe-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .recipe-card a {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: orange;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .no-recipes {
+            text-align: center;
+            color: #555;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="toolbar">
+    <!-- Icons on the left side -->
+    <div class="icons-sx">
+        <button onclick="goBack()">Go Back</button> <!-- Button to navigate back -->
+    </div>
+    <h1 id="welcomepage">La ricetta per te</h1>
+    <!-- Icons on the right side -->
+    <div class="icons-dx">
+        <a href="user.html">
+            <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Home.png?raw=true" alt="Home" class="icon-home">
+        </a>
+    </div>
+</div>
+
+<!-- Container for saved recipes -->
+<div class="container">
+    <h1>Your Saved Recipes</h1>
+    <div id="recipes-container" class="recipes-container">
+        <!-- Recipes will be inserted here dynamically-->
+    </div>
+    <p id="no-recipes-message" class="no-recipes" style="display: none;">No saved recipes</p> <!-- Message shown when no recipes are saved -->
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("http://127.0.0.1:5000/saved_recipes", { // Fetch saved recipes from the backend API
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        })
+            .then(response => response.json()) // Convert response to JSON
+            .then(data => {
+                const container = document.getElementById("recipes-container");
+                const noRecipesMessage = document.getElementById("no-recipes-message");
+
+                // If no recipes, display the "No saved recipes" message
+                if (data.length === 0) {
+                    noRecipesMessage.style.display = "block";
+                } else {
+                    data.forEach(recipe => {  // Loop through the saved recipes and create a recipe card for each
+                        const div = document.createElement("div");
+                        div.classList.add("recipe-card");
+                        div.innerHTML = `
+                                <img src="${recipe.image_url}" alt="${recipe.recipe_name}">
+                                <h3>${recipe.recipe_name}</h3>
+                                <a href="recipe_details.html?id=${recipe.id}">View Recipe</a>
+                            `;
+                        container.appendChild(div); // Add the recipe card to the container
+                    });
+                    noRecipesMessage.style.display = "none"; // Hide message if there are recipes
+                }
+            })
+            .catch(error => console.error("Error fetching saved recipes:", error));
+    });
+
+    // Function to navigate back
+    function goBack() {
+        window.history.back();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Recipes</title>
+  <link rel="stylesheet" href="/frontend/styleRicette.css">  <!-- Link to external stylesheet -->
+  <style>
+    .filter-container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .filter-container label, .filter-container select, .filter-container input {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+    }
+    .button-container button {
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .apply-button { background: #ff9800; color: white; }
+    .reset-button { background: #ccc; }
+  </style>
+</head>
+<body>
+<div class="filter-container">
+  <h3>Filter Recipes</h3>
+  <label for="filter-name">Nome:</label>
+  <input type="text" id="filter-name">
+
+  <label for="filter-preparation-time">Preparation Time:</label>
+  <select id="filter-preparation-time"></select>
+
+  <label for="filter-type-of-cooking">Type of Cooking:</label>
+  <select id="filter-type-of-cooking"></select>
+
+  <label for="filter-difficulty">Difficulty:</label>
+  <select id="filter-difficulty"></select>
+
+  <label for="filter-cost">Cost:</label>
+  <select id="filter-cost"></select>
+
+  <label for="filter-ingredients">Ingredients:</label>
+  <select id="filter-ingredients"></select>
+
+  <label for="filter-chef">Chef:</label>
+  <select id="filter-chef"></select>
+  <!-- Buttons for applying and resetting filters -->
+  <div class="button-container">
+    <button class="apply-button" onclick="applyFilters()">Find</button>
+    <button class="reset-button" onclick="resetFilters()">Reset</button>
+  </div>
+</div>
+
+<script>
+  async function fetchFilters() {  // Function to fetch filter options from the backend
+    const token = localStorage.getItem('token');
+    if (!token) {  // Check if user is logged in
+      alert('You need to log in');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/ricette/filtri', { // Fetch filter data from the backend API
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error(`Error HTTP: ${response.status}`); // Handle HTTP errors
+
+      const filters = await response.json(); // Parse response data as JSON
+      console.log('Filters received from the backend:', filters);
+
+      if (!filters || Object.keys(filters).length === 0) {
+        console.warn('No filter received!'); // Warning if no filters are received
+        return;
+      }
+      // Populate filter dropdowns with received values
+      populateSelect('filter-preparation-time', filters.preparation_time);
+      populateSelect('filter-type-of-cooking', filters.type_of_cooking);
+      populateSelect('filter-difficulty', filters.difficulty);
+      populateSelect('filter-cost', filters.cost);
+      populateSelect('filter-ingredients', filters.ingredients);
+      populateSelect('filter-chef', filters.chef_name);
+
+    } catch (error) {
+      console.error('Error retrieving filters:', error);
+    }
+  }
+  // Function to populate a dropdown with values
+  function populateSelect(elementId, values) {
+    const select = document.getElementById(elementId);
+    select.innerHTML = '<option value="">Tutti</option>';   // Default option
+
+    if (!values || values.length === 0) {
+      console.warn(`No value for the filter: ${elementId}`); // Warning if no values
+      return;
+    }
+
+    console.log(`Populating ${elementId}:`, values);
+    values.forEach(value => {
+      if (value) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option); // Add option to dropdown
+      }
+    });
+  }
+  // Function to apply selected filters
+  function applyFilters() {
+    const params = new URLSearchParams();
+    // Retrieve filter values
+    const name = document.getElementById('filter-name').value.trim();
+    const prepTime = document.getElementById('filter-preparation-time').value;
+    const cookingType = document.getElementById('filter-type-of-cooking').value;
+    const difficulty = document.getElementById('filter-difficulty').value;
+    const cost = document.getElementById('filter-cost').value;
+    const ingredient = document.getElementById('filter-ingredients').value;
+    const chef = document.getElementById('filter-chef').value;
+// Append selected filters to URL parameters if not empty
+    if (name) params.append('recipe_name', name);
+    if (prepTime) params.append('preparation_time', prepTime);
+    if (cookingType) params.append('type_of_cooking', cookingType);
+    if (difficulty) params.append('difficulty', difficulty);
+    if (cost) params.append('cost', cost);
+    if (ingredient) params.append('ingredient', ingredient);
+    if (chef) params.append('chef_name', chef);
+
+    window.location.href = `user.html?${params.toString()}`; // Redirect to the results page with the selected filters
+  }
+  // Function to reset all filters
+  function resetFilters() {
+    document.getElementById('filter-name').value = '';
+    document.getElementById('filter-preparation-time').value = '';
+    document.getElementById('filter-type-of-cooking').value = '';
+    document.getElementById('filter-difficulty').value = '';
+    document.getElementById('filter-cost').value = '';
+    document.getElementById('filter-ingredients').value = '';
+    document.getElementById('filter-chef').value = '';
+
+    fetchFilters(); // Reload initial filter values
+  }
+
+  document.addEventListener('DOMContentLoaded', fetchFilters);
+</script>
+
+</body>
+</html>

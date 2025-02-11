@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!-- Links an external CSS file for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Pushes the button to the bottom */
+        }
+
+        h1, h2, h3 { color: #333; }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: orange;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #0056b3; }
+        .recipe-info { margin-bottom: 20px; }
+        .recipe-info p { margin: 10px 0; font-size: 16px; }
+
+        #remove-button {
+            background-color: orange;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            align-self: center;
+            margin-top: 20px;
+        }
+
+        #remove-button:hover {
+            background-color: #0056b3;
+        }
+
+        #recipe-image {
+            display: block;
+            margin: 0 auto; /* Center image horizontally */
+            max-width: 40%;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>
+<div class="toolbar">
+    <!-- Icons on the left side -->
+    <div class="icons-sx">
+        <button onclick="goBack()">Go Back</button> <!-- Button to go back to the previous page -->
+    </div>
+    <h1 id="welcomepage">La ricetta per te</h1>
+    <!-- Icons on the right side -->
+    <div class="icons-dx">
+        <a href="user.html">
+            <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Home.png?raw=true" alt="Home" class="icon-home">
+        </a>
+    </div>
+</div>
+<div class="container">
+    <h2 id="recipe-name"></h2>
+    <img id="recipe-image" style="max-width: 40%; height: auto;">
+    <div id="recipe-info" class="recipe-info"></div>
+    <h3>Preparation</h3>
+    <p id="recipe-preparation"></p>
+    <button id="remove-button" style="display: block;" onclick="removeRecipe()">Remove</button>  <!--Remove button-->
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search); // Get the recipe ID from the URL parameters
+        const recipeId = urlParams.get("id");
+        const authToken = localStorage.getItem('token');  // Retrieve the authentication token from local storage
+        const authenticatedChef = localStorage.getItem('chef_name');  // Retrieve the authenticated chef's name from local storage
+        // Check if a valid recipe ID is provided
+        if (recipeId) { // Fetch recipe details from the backend API
+            fetch(`http://127.0.0.1:5000/ricette/${recipeId}`, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.body.innerHTML = `<h2>Recipe not found</h2>`; // Display an error message if the recipe is not found
+                    } else {
+                        // Set recipe details in the page
+                        document.getElementById('recipe-name').textContent = data.recipe_name;
+                        document.getElementById('recipe-image').src = data.image_url;
+                        document.getElementById('recipe-preparation').textContent = data.preparation;
+
+                        const recipeInfo = document.getElementById('recipe-info');
+                        recipeInfo.innerHTML = `
+                        <p><strong>Preparation time:</strong> ${data.preparation_time}</p>
+                        <p><strong>Type of cooking:</strong> ${data.type_of_cooking}</p>
+                        <p><strong>Difficulty:</strong> ${data.difficulty}</p>
+                        <p><strong>Cost:</strong> ${data.cost}</p>
+                        <p><strong>Number of ingredients:</strong> ${data.number_of_ingredients}</p>
+                        <p><strong>Chef:</strong> <span id="recipe-chef">${data.chef_name}</span></p>
+                        <p><strong>Ingredienti:</strong></p>
+                    `;
+                        // Loop through ingredients (maximum 20) and add them to the page
+                        for (let i = 1; i <= 20; i++) {
+                            const ingredient = data[`ingrediente${i}`];
+                            if (ingredient) {
+                                const ingredientElement = document.createElement('p');
+                                ingredientElement.textContent = ingredient;
+                                recipeInfo.appendChild(ingredientElement);
+                            }
+                        }
+
+                        // Check if the authenticated chef is the creator of the recipe
+                        if (authenticatedChef && authenticatedChef === data.chef_name) {
+                            const removeButton = document.getElementById("remove-button");
+                            removeButton.style.display = "block";
+                            removeButton.style.visibility = "visible";
+                            removeButton.style.opacity = "1";
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching recipe details:', error));
+        } else {
+            document.body.innerHTML = `<h2>Invalid Recipe ID</h2>`;  // Display an error message if the recipe ID is invalid
+        }
+    });
+    // Function to navigate back to the previous page
+    function goBack() {
+        window.history.back();
+    }
+    // Function to remove a recipe
+    function removeRecipe() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeId = urlParams.get("id");
+        const authToken = localStorage.getItem('token');
+        // Show a confirmation dialog before deleting the recipe
+        if (confirm("Are you sure you want to remove this recipe?")) {
+            fetch(`http://127.0.0.1:5000/ricette/${recipeId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Recipe successfully removed");
+                        // Redirect the user to chef.html
+                        window.location.href = "chef.html";
+                    } else {
+                        alert("Error removing the recipe");
+                    }
+                })
+                .catch(error => console.error('Error removing recipe:', error));
+        }
+    }
+
+
+</script>
+</body>
+</html>

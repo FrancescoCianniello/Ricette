@@ -1,0 +1,270 @@
+body{
+    font-family:sans-serif;
+    font-size: 20px;
+    background-image: url("https://flawless.life/wp-content/uploads/2020/09/I-Migliori-Ristoranti-dove-Mangiare-sul-Lago-Maggiore-Tiffany-1536x1024.jpg");
+    background-size: cover; /* Ensures the background covers the entire viewport */
+    background-position: center;
+    background-repeat: no-repeat; /* Prevents image repetition */
+    min-height: 100vh; /* Ensures the page covers the full viewport height */
+    text-align: center;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: inline-block; /* Allows the container to size according to its content */
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px; /* Rounds the corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: auto;  /* Centers the container */
+    min-height:100px;
+}
+
+.logo {
+    position: absolute;
+    top: 50%;
+    right: 80px;
+    transform: translateY(-50%); /* Ensures it's perfectly centered vertically */
+    width: 150px;
+    height: auto;
+}
+
+body.choose-role{
+    margin:0; /* Removes default margin */
+    padding:0;
+    font-family: sans-serif;
+    background-image: url("https://th.bing.com/th/id/R.776c6de2295e95d9f13382849b1f7bdb?rik=GPS4xZw6bLiA%2bg&pid=ImgRaw&r=0");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers elements horizontally */
+    justify-content: center; /* Centers elements vertically */
+}
+
+.choose-role h1{
+    flex:1; /* Allows the heading to expand */
+    text-align: center;
+    margin:0;
+}
+
+.backbutton {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    text-decoration: none;  /* Removes underline from links */
+    color: white;
+    font-size: 18px;
+}
+
+.container-roles{
+    margin-top: 80px;
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.role{
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 200px;
+    height: 250px;
+    padding: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+}
+
+.role img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 15px; /* Adds spacing below the image */
+}
+
+.logouts {
+    position: absolute;
+    top: 20px;
+    right: 50px;
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;  /* Changes cursor on hover */
+    font-size: 14px;
+}
+
+body.chef{
+    background-image: url("https://th.bing.com/th/id/OIP.xjjukybcDudkH43vxhsY9wHaEJ?rs=1&pid=ImgDetMain");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.img-chef{
+    position: fixed;
+    left:400px;
+    top:2px;
+    width: 80px;
+    height: auto;
+    justify-content: center;
+    z-index: 1001; /* Ensures it's above other elements */
+}
+
+.toolbar{
+    position: fixed;
+    display: flex;
+    padding: 10px 20px;
+    background-color: antiquewhite;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height:10%;
+    top:0; /* Sticks to the top */
+    justify-content: space-between; /* Spreads elements */
+    align-items: center;
+    z-index: 1000;
+}
+
+h1{
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0;
+    font-size: 30px;
+    font-weight: bold;
+    color: black;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds a shadow effect */
+}
+
+.icons-sx{
+    display: flex;
+    justify-content: center;
+    gap:50px; /* Adds spacing between icons */
+    margin-left:70px;
+}
+
+.icons-dx{
+    display: flex;
+    justify-content: center;
+    gap:50px;
+    margin-right:70px;
+}
+
+.icon{
+    width: 50px;
+    height: 50px;
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.icon:hover{
+    filter: brightness(2.0);
+    transform: scale(1.2);  /* Enlarges on hover */
+}
+
+.menu {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-button {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.menu-dropdown {
+    display: none; /* Hides by default */
+    position: absolute;
+    background-color: orange;
+    min-width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 5px;
+    margin-top: 5px;
+    padding: 10px 0;
+    list-style: none;
+}
+
+.menu-dropdown li {
+    padding: 5px 15px;
+}
+
+.menu-dropdown li a {
+    text-decoration: none;
+    color: white;
+    display: block;
+}
+
+.menu-dropdown li a:hover {
+    background-color: blue;
+}
+
+.menu:hover .menu-dropdown {
+    display: block; /* Shows dropdown on hover */
+}
+
+.logout-button{
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: orange;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.icon-home{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    transition: filter 0.3s ease, transform 0.3s ease;
+    right: 30px;
+    top:15px;
+    background-color: white;
+}
+
+/* Style for the menu items */
+.menu-dropdown li a {
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+}
+
+/*Style for the hover effect */
+.menu-dropdown li a:hover {
+    color: black;
+}
+
+#recipes-container {
+    display: flex;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+
+
+

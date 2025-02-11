@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!-- Links an external CSS file for styling -->
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: orange;
+            top: 20px;
+            left:50px;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            position: absolute;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .recipe-info {
+            margin-bottom: 20px;
+        }
+
+        .recipe-info p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        #heart-icon {
+            width: 30px;
+            height: auto;
+            cursor: pointer;
+            display: inline-block; /* Ensures the icon is visible */
+        }
+
+    </style>
+</head>
+<body>
+<div class="toolbar">
+    <!-- Icons on the left side -->
+    <div class="icons-sx">
+        <button onclick="goBack()">Go Back</button> <!-- Button to go back to the previous page -->
+    </div>
+        </div>
+    <h1 id="welcomepage">La ricetta per te</h1>
+    <!-- Icons on the right side -->
+    <div class="icons-dx">
+        <a href="user.html">
+            <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Home.png?raw=true" alt="Home" class="icon-home">
+        </a>
+    </div>
+</div>
+<div class="container">
+    <h2 id="recipe-name"></h2>
+    <img id="heart-icon" src="https://th.bing.com/th/id/OIP.VBdX5JNiNOfUMwqiHll2ZgHaHa?rs=1&pid=ImgDetMain"  style="width: 30px; cursor: pointer;">
+    <img id="recipe-image" style="max-width: 40%; height: auto;">
+    <div id="recipe-info" class="recipe-info"></div>
+    <h3>Preparation</h3>
+    <p id="recipe-preparation"></p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Set empty heart icon when the page loads
+        document.getElementById('heart-icon').src = "https://th.bing.com/th/id/OIP.VBdX5JNiNOfUMwqiHll2ZgHaHa?rs=1&pid=ImgDetMain"; // Icona vuota
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeId = urlParams.get("id"); // Get the recipe ID from the URL
+        console.log("Recipe ID:", recipeId);
+
+        if (recipeId) {
+            fetch(`http://127.0.0.1:5000/ricette/${recipeId}`, { // Fetch recipe details
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.body.innerHTML = `<h2>Recipe not found</h2>`;  // Display error if recipe is not found
+                    } else { // Populate recipe details
+                        document.getElementById('recipe-name').textContent = data.recipe_name;
+                        document.getElementById('recipe-image').src = data.image_url;
+                        document.getElementById('recipe-preparation').textContent = data.preparation;
+
+                        const recipeInfo = document.getElementById('recipe-info');
+                        recipeInfo.innerHTML = `
+                            <p><strong>Preparation time:</strong> ${data.preparation_time}</p>
+                            <p><strong>Type of cooking:</strong> ${data.type_of_cooking}</p>
+                            <p><strong>Difficulty:</strong> ${data.difficulty}</p>
+                            <p><strong>Cost:</strong> ${data.cost}</p>
+                            <p><strong>Number of ingredients:</strong> ${data.number_of_ingredients}</p>
+                            <p><strong>Chef:</strong> ${data.chef_name}</p>
+                            <p><strong>Ingredients:</strong></p>
+                        `;
+
+                        for (let i = 1; i <= 15; i++) {
+                            const ingredient = data[`ingrediente${i}`];
+                            if (ingredient) {
+                                const ingredientElement = document.createElement('p');
+                                ingredientElement.textContent = ingredient;
+                                recipeInfo.appendChild(ingredientElement);
+                            }
+                        }
+
+                        // Check if recipe is saved
+                        checkSavedRecipe(recipeId);
+                    }
+                })
+                .catch(error => console.error('Error fetching recipe details:', error));
+        } else {
+            document.body.innerHTML = `<h2>Invalid Recipe ID</h2>`; // Display error if ID is invalid
+        }
+    });
+
+    // Function to check if recipe is saved
+    function checkSavedRecipe(recipeId) {
+        fetch(`http://127.0.0.1:5000/is_saved/${recipeId}`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.saved) {
+                    document.getElementById('heart-icon').src = "https://th.bing.com/th/id/OIP.pp1UbELx8ie6PwVGvrRQiAHaHa?rs=1&pid=ImgDetMain"; // Icona rossa (piena)
+                } else {
+                    document.getElementById('heart-icon').src = "https://th.bing.com/th/id/OIP.VBdX5JNiNOfUMwqiHll2ZgHaHa?rs=1&pid=ImgDetMain"; // Icona vuota
+                }
+            })
+            .catch(error => console.error('Error checking saved recipe:', error));
+    }
+
+    // Function to toggle save/unsaved recipe
+    document.getElementById('heart-icon').addEventListener('click', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const recipeId = urlParams.get("id");
+
+        fetch(`http://127.0.0.1:5000/toggle_save/${recipeId}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.saved) {
+                    document.getElementById('heart-icon').src = "https://th.bing.com/th/id/OIP.pp1UbELx8ie6PwVGvrRQiAHaHa?rs=1&pid=ImgDetMain"; // Icona rossa (piena)
+                } else {
+                    document.getElementById('heart-icon').src = "https://th.bing.com/th/id/OIP.VBdX5JNiNOfUMwqiHll2ZgHaHa?rs=1&pid=ImgDetMain"; // Icona vuota
+                }
+                //Refresh the list of saved recipes without reloading the page
+                updateSavedRecipes();
+            })
+            .catch(error => console.error('Error saving recipe:', error));
+    });
+
+    // Function to update the list of saved recipes
+    function updateSavedRecipes() {
+        fetch("http://127.0.0.1:5000/saved_recipes", {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        })
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById("recipes-container");
+                container.innerHTML = ""; //Cleans up existing list
+                if (data.length === 0) {
+                    container.innerHTML = "<p>No saved recipes.</p>";
+                } else {
+                    data.forEach(recipe => {
+                        const div = document.createElement("div");
+                        div.innerHTML = `<h3>${recipe.recipe_name}</h3><img src="${recipe.image_url}" width="100"><br><a href="recipe_details.html?id=${recipe.id}">View Recipe</a>`;
+                        container.appendChild(div);
+                    });
+                }
+            })
+            .catch(error => console.error("Error fetching saved recipes:", error));
+    }
+
+
+
+    // Function to go back to the previous page
+    function goBack() {
+        window.history.back();
+    }
+</script>
+
+
+
+</body>
+</html>

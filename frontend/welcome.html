@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Ensures that the app is responsive-->
+  <title>Welcome</title>
+  <link rel="stylesheet" href="/frontend/styleRicette.css"> <!--CSS linking-->
+</head>
+<body>
+<div class="container"> <!--Main container for the structure-->
+  <h1 id="welcomeMessage">Loading...</h1>
+  <!--Logout link-->
+<br>  <a href="login.html" class="logout" onclick="logout()">Logout</a>  <!-- Link that invokes the logout function to log out the user -->
+</div>
+<script src="/frontend/script.js"></script> <!--Javascript file link-->
+<script>
+  setTimeout(function() {
+    window.location.href = "chooserole.html";}, 5500); <!--Timeout to redirect the user to the specified URL after 5.5 seconds-->
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ricette">
+    <title>About us</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!-- Links an external CSS file for styling-->
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url("https://th.bing.com/th/id/R.03b8a2c150f2b43e1dba537d5402bb67?rik=FMCDjyH%2foKzyEQ&pid=ImgRaw&r=0");
+            font-size: 0.95rem;
+        }
+        main {
+            flex: 1;   /* Allows the main content to take up the available space */
+        }
+        footer {
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        h1,h2,h3{
+            text-align: center;
+            color: green;
+        }
+
+        .aboutus-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .backbutton{
+            position:absolute;
+            color:white;
+            left:20px;
+        }
+    </style>
+</head>
+<header>
+    <a href="chef.html" class="backbutton"> <--Back</a>  <!-- Creates a back button linking to chef.html -->
+    <a href="chef.html">
+        <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Home.png?raw=true" alt="Home" class="icon-home">
+    </a>
+</header>
+<body>
+<main>
+    <div class="aboutus-container">
+        <h1>Welcome to La Ricetta per te!</h1>  <!-- Main heading -->
+        <section>  <!-- Description of the app -->
+            <p>
+                The <strong>"La Ricetta per te" </strong> app is a new online platform for those who want to experiment with recipes of all kinds or for those
+                who need help cooking something quick.
+            </p>
+        </section>
+        <section>  <!-- Section explaining user functionalities -->
+            <h2>How can the user use the app?</h2>
+            <p>
+                Users, after registering and entering their private area, can access a large collection of recipes.The user can decide whether to search for the recipe
+                through the filters that customize the search or can proceed to a search by name or by scrolling through the list. At this point, if the recipe is needed at that moment,
+                the user can also use only the view, while if he has to use it in the future, there is the option to select the recipe and place it in the list of saved recipes.
+                Each recipe is associated with the chef who published it, and the user can take advantage of a messaging system to be able to ask the chef for suggestions or clarifications.
+                The user can also decide to view only the chef's profile or to follow him, i.e. to receive updates on the recipes he will publish in the future.
+                A final option available to the user is to be able to create their own shopping list, adding or removing the ingredients in the database.
+            </p>
+        </section>
+        <section>  <!-- Section explaining chef functionalities -->
+            <h2>How can the chef use the app?</h2>
+            <p>
+                The chef also has his own authentication system and is allowed to publish recipes or remove them if they receive low ratings.
+            </p>
+        </section>
+        <section>  <!-- Section for additional details -->
+            <h2>Additional information</h2>
+            <p>
+                The app is completely free and simple to use for any category of user.
+            </p>
+            <footer>
+                <p>&copy; 2024 La Ricetta per te. All rights reserved.</p>  <!-- Footer with copyright information -->
+            </footer>
+        </section>
+    </div>
+</main>
+</body>
+</html>
