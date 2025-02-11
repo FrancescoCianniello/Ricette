@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a Recipe</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!-- Link to external CSS file -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            padding: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: orange;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: blue;
+        }
+        #ingredient-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Distance between Add Ingredient button and Submit button */
+        button[type="button"] {
+            margin-top: 20px;
+        }
+
+        /* Extra spacing for submit button */
+        button[type="submit"] {
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="toolbar">
+    <div class="icons-sx">
+        <button onclick="goBack()">Go Back</button>  <!-- Back button -->
+    </div>
+    <h1 id="welcomepage">Add recipes</h1>
+    <div class="icons-dx">
+        <a href="user.html">
+            <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Home.png?raw=true" alt="Home" class="icon-home">
+        </a>
+    </div>
+</div>
+<div class="container">
+    <h1>Add a New Recipe</h1>
+    <form id="recipe-form">
+        <label for="recipe_name">Recipe Name:</label>
+        <input type="text" id="recipe_name" name="recipe_name" required>
+
+        <label for="preparation_time">Preparation Time:</label>
+        <input type="text" id="preparation_time" name="preparation_time" required>
+
+        <label for="type_of_cooking">Type of Cooking:</label>
+        <input type="text" id="type_of_cooking" name="type_of_cooking" required>
+
+        <label for="difficulty">Difficulty:</label>
+        <select id="difficulty" name="difficulty" required>
+            <option value="Simple">Simple</option>
+            <option value="Medium">Medium</option>
+            <option value="Difficult">Difficult</option>
+        </select>
+
+        <label for="cost">Cost:</label>
+        <select id="cost" name="cost" required>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+
+        <label for="number_of_ingredients">Number of Ingredients:</label>
+        <select id="number_of_ingredients" name="number_of_ingredients" required>
+            <!-- Options from 1 to 20 -->
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+            <option value="19">19</option>
+            <option value="20">20</option>
+        </select>
+
+        <label for="chef_name">Chef Name:</label>
+        <input type="text" id="chef_name" name="chef_name" required>
+
+        <label for="image_url">Image URL:</label>
+        <input type="text" id="image_url" name="image_url" required>
+
+        <label for="preparation">Preparation:</label>
+        <textarea id="preparation" name="preparation" rows="4" required></textarea>
+
+        <div id="ingredient-container">
+            <label>Ingredients:</label>
+            <label for="ingredient1"></label><input type="text" id="ingredient1" name="ingredient1">  <!-- First ingredient field -->
+        </div>
+
+        <button type="button" id="add-ingredient-button">Add Ingredient</button>
+        <button type="submit">Submit Recipe</button>
+    </form>
+</div>
+
+<script>
+    let ingredientCount = 1; // Track the number of ingredients
+
+    const form = document.getElementById("recipe-form");
+    const ingredientContainer = document.getElementById("ingredient-container");
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const recipeData = new FormData(form);
+        const recipeObject = {};
+
+        // Collect ingredients dynamically
+        const ingredients = [];
+        for (let i = 1; i <= ingredientCount; i++) {
+            const ingredient = document.getElementById(`ingredient${i}`);
+            if (ingredient && ingredient.value.trim() !== '') {
+                ingredients.push(ingredient.value.trim());
+            }
+        }
+
+        recipeObject.ingredients = ingredients;  // Store ingredients
+
+        recipeData.forEach((value, key) => {
+            if (key !== 'ingredient1') {
+                recipeObject[key] = value;
+            }
+        });
+
+        // Send data to the backend
+        fetch("http://127.0.0.1:5000/ricette", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(recipeObject)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Recipe added successfully") {
+                    alert("Recipe added successfully!");
+                    form.reset();  // Reset form after submission
+                } else {
+                    alert("Error adding recipe");
+                }
+            })
+            .catch(error => {
+                alert("Error adding recipe");
+                console.error(error);
+            });
+    });
+
+    function addIngredientField() {
+        if (ingredientCount < 20) {
+            ingredientCount++;
+            const ingredientInput = document.createElement("input");
+            ingredientInput.type = "text";
+            ingredientInput.id = `ingredient${ingredientCount}`;
+            ingredientInput.name = `ingredient${ingredientCount}`;
+            ingredientContainer.appendChild(ingredientInput);
+        }
+    }
+
+    // Add the Add Ingredient button functionality
+    const addIngredientButton = document.getElementById("add-ingredient-button");
+    addIngredientButton.onclick = addIngredientField;
+
+    function goBack() {
+        window.history.back();  // Go back to previous page
+    }
+</script>
+
+</body>
+</html>

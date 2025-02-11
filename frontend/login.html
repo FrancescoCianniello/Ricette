@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Ensures that the app is responsive-->
+    <title>Login</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  <!--Including the jQuery library-->
+    <link rel="stylesheet" href="/frontend/styleRicette.css"> <!--CSS linking-->
+</head>
+<body style="background-image: url('https://redacademy.it/wp-content/uploads/2021/03/chef-de-partie-mansioni.jpg'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed; background-position: center;">
+<body>
+<div class="container"> <!--Main container for the structure-->
+    <h2>Login</h2>
+    <!--Login form-->
+    <form id="loginForm">
+        <label for="username"></label><input type="text" id="username" placeholder="Username" required /> <br><br>
+        <label for="password"></label><input type="password" id="password" placeholder="Password" required /><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <!--Viewing server messages-->
+    <p id="message"> <br></p>
+    <p>Don't have an account? <a href="registration.html">Register here</a>.</p> <!--Registration link for those who do not yet have an account-->
+    <!--Application logo-->
+    <img src="https://raw.githubusercontent.com/FrancescoCianniello/Ricette/main/Logo.jpeg" alt="Logo" class="logo">
+</div>
+<script src="/frontend/script.js"></script> <!--Javascript file link-->
+</body>
+</body>
+</html>

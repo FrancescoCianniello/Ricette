@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--Ensures that the app is responsive-->
+    <title>Registration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>    <!--Including the jQuery library-->
+    <link rel="stylesheet" href="/frontend/styleRicette.css"> <!--CSS linking-->
+</head>
+<body>
+<div class="container"> <!--Main container for the structure-->
+    <h2>Registration</h2>
+    <!--Registration form-->
+    <form id="registerForm">
+        <label for="name"></label><input type="text" id="name" placeholder="Name" required /><br>
+        <label for="surname"></label><input type="text" id="surname" placeholder="Surname" required /><br>
+        <label for="fiscal_code"></label><input type="text" id="fiscal_code" placeholder="Fiscal Code" required /><br>
+        <label for="date_of_birth"></label><input type="date" id="date_of_birth" placeholder="Date of Birth" required /><br>
+        <label for="username"></label><input type="text" id="username" placeholder="Username" required /><br>
+        <label for="password"></label><input type="password" id="password" placeholder="Password" required /><br>
+        <button type="submit">Register</button>
+    </form>
+    <!--Viewing server messages-->
+    <p id="message"><br></p>
+    <p>Already have an account? <a href="login.html">Access here</a>.</p> <!--Login link for those who already have an account-->
+    <img src="https://raw.githubusercontent.com/FrancescoCianniello/Ricette/main/Logo.jpeg" alt="Logo" class="logo">
+</div>
+<!--Application logo-->
+<script src="/frontend/script.js"></script> <!--Javascript file link-->
+</body>
+</html>

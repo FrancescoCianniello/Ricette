@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La ricetta per te</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!--Linking to the CSS file-->
+</head>
+<body class="chef">
+<img src="https://raw.githubusercontent.com/FrancescoCianniello/Ricette/main/Logo.jpeg" alt="Ricette" class="img-chef">  <!-- Application logo -->
+<!--Toolbar at the top-->
+<div class="toolbar">
+    <!-- Icons on the left side -->
+    <div class="icons-sx">
+        <!--Adding the menu-->
+        <div class="menu">
+            <button class="menu-button">Menu</button>
+            <ul class="menu-dropdown">
+                <li><a href="accountchef.html">My account</a></li>
+                <li><a href="aboutuschef.html">About us</a></li>
+                <li><a href="add_recipe.html">Add recipe</a></li>
+                <li><a href="chooserole.html">Choose role</a></li>
+            </ul>
+        </div>
+    </div>
+    <h1 id="welcomepage">La ricetta per te</h1>
+    <!-- Icons on the right side -->
+    <div class="icons-dx">
+        <a href="accountchef.html">
+            <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Account.png?raw=true" alt="Account" class="icon">
+        </a>
+        <a href="login.html" id="logout-webapp" class="logout-button">Logout</a>    <!-- Logout button that redirects to the login page -->
+    </div>
+</div>
+<!-- Main container-->
+<div class="container">
+    <h2>Recipes</h2>
+    <div id="recipes-container"></div>    <!-- Container for recipes retrieved from the backend -->
+</div>
+<script>
+
+    // Fetch recipes from the backend
+    const token = localStorage.getItem('token');  //Retrieve the JWT token stored in the localStorage
+    if (token) {
+        fetch('http://127.0.0.1:5000/ricette', {   // If the token is present, send a GET request to get recipes
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(response => response.json())
+            .then(ricette => {
+                    const sortedRicette = ricette
+                        .slice(0, 10); // Limit the list to 10 recipes
+
+                // Update the recipe container
+                const recipeContainer = document.getElementById('recipes-container');
+                sortedRicette.forEach(ricetta => {
+                    const ricettaElement = document.createElement('div');
+                    ricettaElement.classList.add('container-role');
+                    ricettaElement.innerHTML = `
+                        <h3>${ricetta.recipe_name}</h3>
+                        <img src="${ricetta.image_url}" alt="${ricetta.recipe_name}" style="max-width: 10%; height: auto;">
+                         <p>Preparation time: ${ricetta.preparation_time}|Type of cooking:${ricetta.type_of_cooking}</p>
+                        <p>Difficulty: ${ricetta.difficulty} | Cost:${ricetta.cost}, Number of ingredients:${ricetta.number_of_ingredients}</p>
+                        <p>Chef name: ${ricetta.chef_name}</p>
+                        <button onclick="viewRecipe('${ricetta.id}')">View Recipe</button>
+                    `;
+                    recipeContainer.appendChild(ricettaElement);  // Adds the recipe to the container
+                });
+            })
+
+        .catch(error => {
+                console.error('Error fetching recipes:', error);  // Show an error if there is a problem with the request
+            });
+    } else {
+        alert('Please log in first');    //Notify the user to log in
+        window.location.href = 'login.html';
+    }
+
+    // Function to navigate to the recipe details page
+    function viewRecipe(recipeId) {
+        window.location.href = `recipe_detailsChef.html?id=${recipeId}`;
+    }
+</script>
+
+<script src="/frontend/script.js"></script>   <!-- Linking to an external script -->
+</body>
+</html>

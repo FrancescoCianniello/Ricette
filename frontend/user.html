@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La ricetta per te</title>
+    <link rel="stylesheet" href="/frontend/styleRicette.css">  <!--Linking to the CSS file-->
+    <style>
+        body.user{
+            background-image: url("https://www.thewellingtonagency.com/wp-content/uploads/2018/04/iStock-641186206.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #welcomepage {
+            margin-left: 100px;
+        }
+
+        .img-user{
+            position: fixed;
+            left:400px;
+            top:2px;
+            width: 80px;
+            height: auto;
+            justify-content: center;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body class="user">
+<img src="https://raw.githubusercontent.com/FrancescoCianniello/Ricette/main/Logo.jpeg" alt="Ricette" class="img-user">  <!-- Application logo -->
+<!--Toolbar at the top-->
+<div class="toolbar">
+    <!-- Icons on the left side -->
+    <div class="icons-sx">
+        <!--Adding the menu-->
+        <div class="menu">
+            <button class="menu-button">Menu</button>
+            <ul class="menu-dropdown">
+                <li><a href="accountuser.html">My account</a></li>
+                <li><a href="aboutususer.html">About us</a></li>
+                <li><a href="saved_recipes.html">Saved Recipes</a></li>
+                <li><a href="chooserole.html">Choose role</a></li>
+            </ul>
+        </div>
+    </div>
+    <h1 id="welcomepage">La ricetta per te</h1>
+    <!-- Icons on the right side -->
+    <div class="icons-dx">
+        <a href="search_recipe.html">
+            <img src="https://thumbs.dreamstime.com/b/bottone-rotondo-arancio-speciale-dell-icona-della-lente-d-ingrandimento-103974988.jpg" alt="Search" class="icon">
+        </a>
+        <a href="accountuser.html">
+            <img src="https://github.com/FrancescoCianniello/Ricette/blob/main/Account.png?raw=true" alt="Account" class="icon">
+        </a>
+        <a href="login.html" id="logout-webapp" class="logout-button">Logout</a>    <!-- Logout button that redirects to the login page -->
+    </div>
+</div>
+<!-- Main container-->
+<div class="container">
+    <h2>Recipes</h2>
+    <div id="recipes-container"></div>    <!-- Container for recipes retrieved from the backend -->
+</div>
+<script>
+    // Fetch recipes from the backend
+    async function fetchRecipes() {
+        const token = localStorage.getItem('token');  //Retrieve the JWT token stored in the localStorage
+        if (!token) {
+            alert('Please log in first');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const url = `http://127.0.0.1:5000/ricette/filtrate?${params.toString()}`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error("Error in retrieving recipes");  // Throw an error if the request fails
+
+            const ricette = await response.json();  // Parse the response as JSON
+            updateRecipesList(ricette);  // Update the UI with the retrieved recipes
+        } catch (error) {
+            console.error('Error in retrieving recipes:', error);
+        }
+    }
+
+    function updateRecipesList(ricette) {
+        const recipeContainer = document.getElementById('recipes-container');
+        recipeContainer.innerHTML = ''; // Clear the existing content in the container
+
+        if (ricette.length === 0) { // Check if there are no recipes
+            recipeContainer.innerHTML = '<p>No recipe found</p>';
+            return; // Stop execution
+        }
+
+        ricette.forEach(ricetta => {  // Loop through the list of recipes
+            const ricettaElement = document.createElement('div');
+            ricettaElement.classList.add('container-role');
+            ricettaElement.innerHTML = `
+                <h3>${ricetta.recipe_name}</h3>
+                <img src="${ricetta.image_url}" alt="${ricetta.recipe_name}" style="max-width: 10%; height: auto;">
+                <p>Preparation time: ${ricetta.preparation_time} | Type of cooking: ${ricetta.type_of_cooking}</p>
+                <p>Difficulty: ${ricetta.difficulty} | Cost: ${ricetta.cost}, Number of ingredients: ${ricetta.number_of_ingredients}</p>
+                <p>Chef name: ${ricetta.chef_name}</p>
+                <button onclick="viewRecipe('${ricetta.id}')">View Recipe</button>
+            `;
+            recipeContainer.appendChild(ricettaElement);  // Append the recipe element to the container
+        });
+    }
+
+    function viewRecipe(recipeId) {
+        window.location.href = `recipe_details.html?id=${recipeId}`; // Redirect to the recipe details page with the recipe ID
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchRecipes);
+</script>
+<script src="/frontend/script.js"></script>   <!-- Linking to an external script -->
+</body>
+</html>
